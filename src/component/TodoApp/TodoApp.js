@@ -3,9 +3,20 @@ import "./TodoApp.css";
 
 export default class TodoApp extends Component {
   state = {
-    input: " ",
+    input: "",
     items: []
   };
+
+  componentDidMount() {
+    const storedItems = localStorage.getItem("todoItems");
+    if (storedItems) {
+      this.setState({ items: JSON.parse(storedItems) });
+    }
+  }
+
+  componentDidUpdate() {
+    localStorage.setItem("todoItems", JSON.stringify(this.state.items));
+  }
 
   handleChange = (event) => {
     this.setState({
@@ -17,10 +28,12 @@ export default class TodoApp extends Component {
     event.preventDefault();
     const { input } = this.state;
 
-    this.setState({
-      items: [...this.state.items, input],
-      input: " ",
-    });
+    if (input.trim() !== "") {
+      this.setState({
+        items: [...this.state.items, input],
+        input: "",
+      });
+    }
   };
 
   deleteItem = (key) => {
